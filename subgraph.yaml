@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
@@ -7,16 +7,18 @@ dataSources:
     network: matic
     source:
       address: "0x2452d8049F04d54cA779257678A691eE4a413267"
+      startBlock: 13849000
       abi: Contract
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.2
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Approval
         - ApprovalForAll
         - OwnershipTransferred
         - Transfer
+        - Account
       abis:
         - name: Contract
           file: ./abis/Contract.json
