@@ -11,17 +11,20 @@ type Artwork @entity {
   tokenId: BigInt!
   creator: Account!
   owner: Account!
-
+  
   metadataUri: String
-  mediaUri: String
-  brokenUri: Boolean
+  metadataHash: String
+  broken: Boolean
 
   name: String
   description: String
-  yearCreated: String
   tags: [String!]
+  mimeType: String
+  size: BigInt
+  mediaUri: String
+  mediaHash: String
 
-  created: BigInt!
+  creationDate: BigInt!
   modified: BigInt
 
 }

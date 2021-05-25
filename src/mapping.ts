@@ -1,4 +1,4 @@
-import { BigInt, log } from "@graphprotocol/graph-ts"
+import { Bytes, JSONValueKind, ipfs, json, log } from '@graphprotocol/graph-ts'
 import {
   Contract,
   Approval,
@@ -84,24 +84,19 @@ export function handleTransfer(event: TransferEvent): void {
     item.creator = account.id
     item.owner = item.creator
     item.tokenId = event.params.tokenId
-    item.created = event.block.timestamp
-    // let uri = Contract.bind(event.address).tokenURI(event.params.tokenId)
-    // log.info('URI', [uri])
+    item.creationDate = event.block.timestamp
+    let uri = Contract.bind(event.address).tokenURI(event.params.tokenId)
 
-    item.metadataUri = "URI"
-    item.brokenUri = false
+    if (!!uri) {
+      item.metadataUri = uri 
+      item.broken = false
+    } else {
+      item.broken = true
+    }
 
-    // if (!!uri) {
-    //   item.metadataUri = uri 
-    //   item.brokenUri = false
-    // } else {
-    //   item.brokenUri = true
-    // }
+    readArtworkMetadata(item as Artwork).save()
 
     item.save()
-
-
-    // readArtworkMetadata(item as Artwork).save()
 
   } else {
 
@@ -127,58 +122,68 @@ export function handleTransfer(event: TransferEvent): void {
 }
 
 function readArtworkMetadata(item: Artwork): Artwork {
-  // let hash = getIpfsHash(item.metadataUri)
-  // item.mediaUri = hash 
-  // if (hash != null) {
-  //   let raw = ipfs.cat(hash)
+  let hash = getIpfsHash(item.metadataUri)
+  if (hash != null) {
+    item.mediaUri = hash 
 
-  //   item.descriptorHash = hash
+    let raw = ipfs.cat(hash)
 
-  //   if (raw != null) {
-  //     let value = json.fromBytes(raw as Bytes)
+    item.metadataHash = hash
 
-  //     if (value.kind == JSONValueKind.OBJECT) {
-  //       let data = value.toObject()
+    if (raw != null) {
+      let value = json.fromBytes(raw as Bytes)
 
-  //       if (data.isSet('name')) {
-  //         item.name = data.get('name').toString()
-  //       }
+      if (value.kind == JSONValueKind.OBJECT) {
+        let data = value.toObject()
 
-  //       // if (data.isSet('media.size')) {
-  //       //   item.mediaSize = data.get('media.size').toString()
-  //       // }
+        if (data.isSet('name')) {
+          item.name = data.get('name').toString()
+        }
 
-  //       if (data.isSet('description')) {
-  //         item.description = data.get('description').toString()
-  //       }
+        if (data.isSet('description')) {
+          item.description = data.get('description').toString()
+        }
 
-  //       if (data.isSet('yearCreated')) {
-  //         item.yearCreated = data.get('yearCreated').toString()
-  //       }
+        if (data.isSet('creationDate')) {
+          item.creationDate = data.get('creationDate').toBigInt()
+        }
 
-  //       if (data.isSet('createdBy')) {
-  //         item.createdBy = data.get('createdBy').toString()
-  //       }
+        if (data.isSet('image')) {
+          item.mediaUri = data.get('image').toString()
+          item.mediaHash = getIpfsHash(item.mediaUri)
+        }
 
-  //       if (data.isSet('imageUri')) {
-  //         item.imageUri = data.get('imageUri').toString()
-  //         item.imageHash = getIpfsHash(item.imageUri)
-  //       }
+        if (data.isSet('animation_url')) {
+          item.mediaUri = data.get('animation_url').toString()
+          item.mediaHash = getIpfsHash(item.mediaUri)
+        }
 
-  //       // if (data.isSet('animation_url')) {
-  //       //   item.imageUri = data.get('animation_url').toString()
-  //       //   item.imageHash = getIpfsHash(item.imageUri)
-  //       // }
+        if (data.isSet('media')) {
 
-  //       if (data.isSet('tags')) {
-  //         item.tags = data
-  //           .get('tags')
-  //           .toArray()
-  //           .map<string>(t => t.toString())
-  //       }
-  //     }
-  //   }
-  // }
+          let media = data.get('media').toObject()
+
+          if (media.isSet('mimeType')) {
+            item.mimeType = media.get('mimeType').toString()
+          }
+
+          if (media.isSet('size')) {
+            item.size = media.get('size').toBigInt()
+          }
+
+        }
+
+        if (data.isSet('tags')) {
+          item.tags = data
+            .get('tags')
+            .toArray()
+            .map<string>(t => t.toString())
+        }
+
+      }
+    }
+  } else {
+    item.broken = true
+  }
 
   return item
 }

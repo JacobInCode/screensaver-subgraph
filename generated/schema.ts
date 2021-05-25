@@ -153,8 +153,8 @@ export class Artwork extends Entity {
     }
   }
 
-  get mediaUri(): string | null {
-    let value = this.get("mediaUri");
+  get metadataHash(): string | null {
+    let value = this.get("metadataHash");
     if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -162,21 +162,21 @@ export class Artwork extends Entity {
     }
   }
 
-  set mediaUri(value: string | null) {
+  set metadataHash(value: string | null) {
     if (value === null) {
-      this.unset("mediaUri");
+      this.unset("metadataHash");
     } else {
-      this.set("mediaUri", Value.fromString(value as string));
+      this.set("metadataHash", Value.fromString(value as string));
     }
   }
 
-  get brokenUri(): boolean {
-    let value = this.get("brokenUri");
+  get broken(): boolean {
+    let value = this.get("broken");
     return value.toBoolean();
   }
 
-  set brokenUri(value: boolean) {
-    this.set("brokenUri", Value.fromBoolean(value));
+  set broken(value: boolean) {
+    this.set("broken", Value.fromBoolean(value));
   }
 
   get name(): string | null {
@@ -213,23 +213,6 @@ export class Artwork extends Entity {
     }
   }
 
-  get yearCreated(): string | null {
-    let value = this.get("yearCreated");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set yearCreated(value: string | null) {
-    if (value === null) {
-      this.unset("yearCreated");
-    } else {
-      this.set("yearCreated", Value.fromString(value as string));
-    }
-  }
-
   get tags(): Array<string> | null {
     let value = this.get("tags");
     if (value === null || value.kind == ValueKind.NULL) {
@@ -247,13 +230,81 @@ export class Artwork extends Entity {
     }
   }
 
-  get created(): BigInt {
-    let value = this.get("created");
+  get mimeType(): string | null {
+    let value = this.get("mimeType");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set mimeType(value: string | null) {
+    if (value === null) {
+      this.unset("mimeType");
+    } else {
+      this.set("mimeType", Value.fromString(value as string));
+    }
+  }
+
+  get size(): BigInt | null {
+    let value = this.get("size");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set size(value: BigInt | null) {
+    if (value === null) {
+      this.unset("size");
+    } else {
+      this.set("size", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get mediaUri(): string | null {
+    let value = this.get("mediaUri");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set mediaUri(value: string | null) {
+    if (value === null) {
+      this.unset("mediaUri");
+    } else {
+      this.set("mediaUri", Value.fromString(value as string));
+    }
+  }
+
+  get mediaHash(): string | null {
+    let value = this.get("mediaHash");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set mediaHash(value: string | null) {
+    if (value === null) {
+      this.unset("mediaHash");
+    } else {
+      this.set("mediaHash", Value.fromString(value as string));
+    }
+  }
+
+  get creationDate(): BigInt {
+    let value = this.get("creationDate");
     return value.toBigInt();
   }
 
-  set created(value: BigInt) {
-    this.set("created", Value.fromBigInt(value));
+  set creationDate(value: BigInt) {
+    this.set("creationDate", Value.fromBigInt(value));
   }
 
   get modified(): BigInt | null {
